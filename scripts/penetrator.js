@@ -40,12 +40,12 @@ export async function main(ns) {
   ns.enableLog('print')
   ns.enableLog('tprint')
 
-  let reachedHosts = 0
-  let hackedHosts = 0
+  let reachedHosts = []
+  let hackedHosts = []
   let connectedHosts = getAllConnectedHosts(ns)
   while (reachedHosts < connectedHosts.length) {
-    reachedHosts = 0
-    hackedHosts = 0
+    reachedHosts = []
+    hackedHosts = []
     let nextHostAtSKill = Number.MAX_SAFE_INTEGER
 
     connectedHosts = getAllConnectedHosts(ns)
@@ -76,24 +76,31 @@ export async function main(ns) {
         ns.nuke(host)
       }
 
-      reachedHosts++
+      reachedHosts.push(host)
       const serverAvailableRam = ns.getServerMaxRam(host) - ns.getServerUsedRam(host)
       if (serverAvailableRam < ns.getScriptRam('basic_hack.js') || serverAvailableRam < ns.getScriptRam('bootstrap.js')) {
         // ns.print(`${host} does not have enough ram to run script`)
       } else {
         await ns.scp('bootstrap.js', host)
         ns.exec('bootstrap.js', host)
-        hackedHosts++
+        hackedHosts.push(host)
       }
     }
 
-    ns.print(`Hacked ${hackedHosts} new hosts out of ${connectedHosts.length}`)
-    ns.print(`Currently hacking ${reachedHosts} out of ${connectedHosts.length}`)
+    if (!window.ns) {
+      window.ns = {}
+    }
+    window.ns.connectedHosts = connectedHosts
+    window.ns.reachedHosts = reachedHosts
+    window.ns.latestHackedHosts = hackedHosts
+
+    ns.print(`Hacked ${hackedHosts.length} new hosts out of ${connectedHosts.length}`)
+    ns.print(`Currently hacking ${reachedHosts.length} out of ${connectedHosts.length}`)
     ns.print(`Next host unlocks at ${nextHostAtSKill}`)
-    if (hackedHosts > 0) {
+    if (hackedHosts.length > 0) {
       ns.tprint('Results on latest successfull penetration:')
-      ns.tprint(`Hacked ${hackedHosts} new hosts out of ${connectedHosts.length}`)
-      ns.tprint(`Currently hacking ${reachedHosts} out of ${connectedHosts.length}`)
+      ns.tprint(`Hacked ${hackedHosts.length} new hosts out of ${connectedHosts.length}`)
+      ns.tprint(`Currently hacking ${reachedHosts.length} out of ${connectedHosts.length}`)
       ns.tprint(`Next host unlocks at ${nextHostAtSKill}`)
     }
 
