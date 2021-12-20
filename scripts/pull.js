@@ -16,6 +16,11 @@ export async function main(ns) {
   for (let i in filenames) {
     const filename = filenames[i]
     const url = `https://raw.githubusercontent.com/Custodia/bitburner/${branch}/scripts/${filename}.js`
-    await ns.wget(url, `${filename}.ns`)
+    const result = await ns.wget(url, `${filename}.js`)
+    if (result) {
+      ns.tprint(`Succesfully downloaded ${filename}.js`)
+    } else {
+      ns.tprint(`Failed to download ${filename}.js`)
+    }
   }
 }
