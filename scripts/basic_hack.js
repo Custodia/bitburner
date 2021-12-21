@@ -1,7 +1,7 @@
 /** @param {NS} ns **/
 export async function main(ns) {
   while(true) {
-    const target = ns.args[0] || window.ns.primeTarget || 'joesguns'
+    const target = ns.args[0] || primeTarget || 'joesguns'
     const moneyThresh = ns.getServerMaxMoney(target) * 0.75
     const securityThresh = ns.getServerMinSecurityLevel(target) + 5
 
