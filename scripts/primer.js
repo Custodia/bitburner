@@ -37,7 +37,7 @@ export async function main(ns) {
       ns.print(`Weakening ${hostname} with ${usedThreads}. It takes ${ns.tFormat(growTime)}`)
       availableThreads -= usedThreads
       scriptTimes.push(Math.ceil(growTime))
-      ns.run('weaken.js', usedThreads, hostname, 'once')
+      ns.run('weaken.js', usedThreads, hostname, 1)
     }
 
     let growableHosts = allHosts
@@ -55,7 +55,7 @@ export async function main(ns) {
       ns.print(`Growing ${hostname} with ${usedThreads}. It takes ${ns.tFormat(growTime)}`)
       availableThreads -= usedThreads
       scriptTimes.push(Math.ceil(growTime))
-      ns.run('grow.js', usedThreads, hostname, 'once')
+      ns.run('grow.js', usedThreads, hostname, 1)
     }
 
     const timeToSleep = scriptTimes.length > 0 ? Math.min(...scriptTimes) : 1000
