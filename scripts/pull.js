@@ -12,7 +12,9 @@ export async function main(ns) {
     'pull',
     'hack',
     'weaken',
-    'grow'
+    'grow',
+    'lib',
+    'primer'
   ]
 
   const branch = 'master'
