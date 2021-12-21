@@ -9,7 +9,10 @@ export async function main(ns) {
     'server_upgrader',
     'hacknet_purchaser',
     'scanner',
-    'pull'
+    'pull',
+    'hack',
+    'weaken',
+    'grow'
   ]
 
   const branch = 'master'
