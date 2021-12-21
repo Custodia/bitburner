@@ -43,7 +43,7 @@ export async function main(ns) {
   let reachedHosts = []
   let hackedHosts = []
   let connectedHosts = getAllConnectedHosts(ns)
-  while (reachedHosts < connectedHosts.length) {
+  while (reachedHosts.length < connectedHosts.length) {
     reachedHosts = []
     hackedHosts = []
     let nextHostAtSKill = Number.MAX_SAFE_INTEGER
