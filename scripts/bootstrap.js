@@ -25,5 +25,5 @@ export async function main(ns) {
   }
 
   // Stop current script and start hacking script
-  ns.spawn('basic_hack.js', threads, 'joesguns');
+  ns.spawn('basic_hack.js', threads);
 }
