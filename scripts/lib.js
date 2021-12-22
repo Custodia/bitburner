@@ -35,7 +35,24 @@ export function getFullDataForHost(ns) {
 
     const weakenAmount = ns.weakenAnalyze(1)
     const weakenTime = ns.getWeakenTime(hostname)
-    const timeToFullyWeaken = Math.ceil((ns.getServerSecurityLevel(hostname) - server.minDifficulty) / weakenAmount) * weakenTime
+
+    const scaledHackSecurityIncrease =
+      hackSecurityIncrease * hackCallCount * (hackTime / weakenTime)
+    const scaledGrowSecurityIncrease =
+      growthSecurityIncrease * growthCallCount * (growTime / weakenTime)
+    const securityIncrease = scaledHackSecurityIncrease + scaledGrowSecurityIncrease
+
+    const weakenCallCount = (securityIncrease * 1.2) / weakenAmount
+
+    const hackThreads = Math.ceil(hackCallCount * (hackTime / weakenTime))
+    const growThreads = Math.ceil(growthCallCount * (growTime / weakenTime))
+    const weakenThreads = Math.ceil(weakenCallCount)
+    const totalThreads = hackThreads + growThreads + weakenThreads
+    const hackPortion = hackThreads / totalThreads
+    const growPortion = growThreads / totalThreads
+    const weakenPortion = weakenThreads / totalThreads
+
+    const earningPotential = server.moneyMax / weakenTime
 
     const result = {
       hostname,
@@ -50,7 +67,16 @@ export function getFullDataForHost(ns) {
       hackTime,
       weakenAmount,
       weakenTime,
-      timeToFullyWeaken
+      hackStats: {
+        hackThreads,
+        growThreads,
+        weakenThreads,
+        totalThreads,
+        hackPortion,
+        growPortion,
+        weakenPortion,
+        earningPotential
+      }
     }
 
     if (hostData) {
