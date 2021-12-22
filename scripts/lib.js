@@ -52,7 +52,7 @@ export function getFullDataForHost(ns) {
     const growPortion = growThreads / totalThreads
     const weakenPortion = weakenThreads / totalThreads
 
-    const earningPotential = server.moneyMax / weakenTime
+    const earningPotential = server.moneyMax / (weakenTime * totalThreads)
 
     const result = {
       hostname,
