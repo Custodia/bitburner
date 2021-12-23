@@ -1,4 +1,15 @@
 /** @param {NS} ns **/
+export function findConnectionPath(ns, toFind, toScan = 'home', path = []) {
+  const newPath = path.concat(toScan)
+  const currentScan = ns.scan(toScan)
+  if (currentScan.includes(toFind)) {
+    return newPath.concat(toFind)
+  }
+  return currentScan
+    .filter(host => !path.includes(host))
+    .flatMap(host => findConnectionPath(ns, toFind, host, newPath))
+}
+
 export function getAllHostnames(ns) {
   const currentHost = ns.getHostname()
   let _connectedHosts = [currentHost]
