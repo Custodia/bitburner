@@ -26,12 +26,13 @@ export async function main(ns) {
     let weakenableHosts = allHosts
       .filter(host => host.hasAdminRights && host.minDifficulty < host.hackDifficulty && host.moneyAvailable == host.moneyMax)
       .filter(host => !hostnamesBeingHacked.includes(host.hostname))
-      .sort((a, b) => a.weakenTime - b.weakenTime)
+      .sort((a, b) => a.hackStats.weakenTime - b.hackStats.weakenTime)
 
     // Weaken hosts with available threads
     while (availableThreads > 0 && weakenableHosts.length > 0) {
       const hostToWeaken = weakenableHosts.shift()
-      const { hostname, hackDifficulty, minDifficulty, weakenAmount, growTime } = hostToWeaken
+      const { hostname, hackDifficulty, minDifficulty, weakenAmount } = hostToWeaken
+      const { growTime } = hostToWeaken.hackStats
       const requiredThreads = Math.max(Math.ceil((hackDifficulty - minDifficulty) / weakenAmount), 1)
       const usedThreads = Math.min(availableThreads, requiredThreads)
       ns.print(`Weakening ${hostname} with ${usedThreads}. It takes ${ns.tFormat(growTime)}`)

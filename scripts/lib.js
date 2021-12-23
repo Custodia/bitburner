@@ -86,10 +86,7 @@ export function getFullDataForHost(ns) {
       hostname,
       ...server,
       server,
-      growTime,
-      hackTime,
       weakenAmount,
-      weakenTime,
       hackStats: {
         // Threads
         hackThreads,
@@ -100,6 +97,10 @@ export function getFullDataForHost(ns) {
         hackPortion,
         growPortion,
         weakenPortion,
+        // Times
+        growTime,
+        weakenTime,
+        hackTime,
         // Stats
         earningPotential
       }
