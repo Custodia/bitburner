@@ -85,13 +85,7 @@ export function getFullDataForHost(ns) {
     const result = {
       hostname,
       ...server,
-      growthCallCount,
-      growthSecurityIncrease,
       growTime,
-      percentageOnHack,
-      hackChance,
-      hackCallCount,
-      hackSecurityIncrease,
       hackTime,
       weakenAmount,
       weakenTime,
