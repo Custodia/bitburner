@@ -13,8 +13,8 @@ export async function main(ns) {
     if (ns.getServerMoneyAvailable("home") > ns.getPurchasedServerCost(ram)) {
       const hostname = ns.purchaseServer(`pserv-${ram}GB-${i}`, ram)
       ns.toast(`Purchased server ${hostname}`, 'success')
-	    await ns.scp('bootstrap.js', hostname)
-      ns.exec('bootstrap.js', hostname)
+      await ns.scp('bootstrap_advanced.js', hostname)
+      ns.exec('bootstrap_advanced.js', hostname, 1)
       i = ns.getPurchasedServers().length
 	  } else {
       await ns.sleep(10000)
