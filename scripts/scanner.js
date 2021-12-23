@@ -1,6 +1,10 @@
 /** @param {NS} ns **/
 import { findConnectionPath } from 'lib.js'
 
+export function autocomplete(data, _args) {
+  return [...data.servers]
+}
+
 export async function main(ns) {
   ns.disableLog('ALL')
   ns.enableLog('print')
