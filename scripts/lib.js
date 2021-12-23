@@ -90,13 +90,16 @@ export function getFullDataForHost(ns) {
       weakenAmount,
       weakenTime,
       hackStats: {
+        // Threads
         hackThreads,
         growThreads,
         weakenThreads,
         totalThreads,
+        // Thread portions
         hackPortion,
         growPortion,
         weakenPortion,
+        // Stats
         earningPotential
       }
     }
