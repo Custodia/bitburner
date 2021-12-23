@@ -49,7 +49,7 @@ export async function main(ns) {
     while(availableThreads > 0 && growableHosts.length > 0) {
       const hostToGrow = growableHosts.shift()
       const { hostname, moneyAvailable, moneyMax, growTime } = hostToGrow
-      const multiplier = Math.ceil(moneyMax / moneyAvailable)
+      const multiplier = Math.ceil(moneyMax / Math.max(moneyAvailable, 1))
       const requiredThreads = ns.growthAnalyze(hostname, multiplier)
       const usedThreads = Math.min(availableThreads, requiredThreads)
       ns.print(`Growing ${hostname} with ${usedThreads}. It takes ${ns.tFormat(growTime)}`)
