@@ -16,6 +16,21 @@ export function runConsoleCommand(command) {
   terminalInput[handler].onKeyDown({keyCode:13,preventDefault:()=>null});
 }
 
+export function runPortScript(ns, fileName, host) {
+  switch (fileName) {
+  case 'BruteSSH.exe':
+    return ns.brutessh(host)
+  case 'FTPCrack.exe':
+    return ns.ftpcrack(host)
+  case 'relaySMTP.exe':
+    return ns.relaysmtp(host)
+  case 'HTTPWorm.exe':
+    return ns.httpworm(host)
+  case 'SQLInject.exe':
+    return ns.sqlinject(host)
+  }
+}
+
 export function findConnectionPath(ns, toFind, toScan = 'home', path = []) {
   const newPath = path.concat(toScan)
   const currentScan = ns.scan(toScan)
