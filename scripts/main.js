@@ -31,6 +31,8 @@ export async function main(ns) {
     hackableHosts.forEach(host => {
       portHackScripts.forEach(script => runPortScript(ns, script, host.hostname))
       ns.nuke(host.hostname)
+      await ns.scp('bootstrap.js', host.hostname)
+      ns.exec('bootstrap.js', host.hostname)
     })
     const rootableHosts = Object.values(hostData).filter(host => host.hasAdminRights)
     const nextHostAtSKill = Object.values(hostData)
