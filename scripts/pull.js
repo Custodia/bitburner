@@ -2,7 +2,6 @@
 export async function main(ns) {
   const filenames = [
     'basic_hack',
-    'penetrator',
     'script_updater',
     'bootstrap',
     'bootstrap_advanced',
@@ -16,7 +15,6 @@ export async function main(ns) {
     'weaken',
     'grow',
     'lib',
-    'primer',
     'connect',
     'main'
   ]
