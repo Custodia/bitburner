@@ -20,9 +20,13 @@ export async function main(ns) {
     // Get all hosts and host information
     const player = ns.getPlayer()
     const allHostnames = getAllHostnames(ns)
-    const allHosts = allHostnames.map(getFullDataForHostWithFormulas(ns))
+    let allHosts = allHostnames.map(getFullDataForHostWithFormulas(ns))
 
     const portHackScripts = ['BruteSSH.exe', 'FTPCrack.exe', 'relaySMTP.exe', 'HTTPWorm.exe', 'SQLInject.exe'].filter(fileName => ns.fileExists(fileName))
+
+    /****************************/
+    /* Hack new available hosts */
+    /****************************/
 
     const hackableHosts = allHosts
       .filter(host => !host.hasAdminRights)
@@ -31,8 +35,6 @@ export async function main(ns) {
     hackableHosts.forEach(host => {
       portHackScripts.forEach(script => runPortScript(ns, script, host.hostname))
       ns.nuke(host.hostname)
-      await ns.scp('bootstrap.js', host.hostname)
-      ns.exec('bootstrap.js', host.hostname)
     })
     const rootableHosts = allHosts.filter(host => host.hasAdminRights)
     const nextHostAtSKill = allHosts
@@ -47,6 +49,29 @@ export async function main(ns) {
         ns.tprint(`Next host unlocks at ${nextHostAtSKill}`)
       } else if (portHackScripts.length < 5) {
         ns.tprint(`More port tools are needed to unlock next host`)
+      }
+    }
+
+    /***************************************************/
+    /* Start utilizing hosts that have no activity yet */
+    /***************************************************/
+
+    allHosts = allHostnames.map(getFullDataForHostWithFormulas(ns))
+    const utilizableHosts = allHosts.filter(host => host.hasAdminRights && host.ramUsed === 0)
+
+    for (const i in utilizableHosts) {
+      const host = utilizableHosts[i]
+      if (host.maxRam > ns.getScriptRam('bootstrap_advanced.js')) {
+        ns.print(`Bootstrapping ${host.hostname}`)
+        await ns.scp('bootstrap_advanced.js', host.hostname)
+        ns.exec('bootstrap_advanced.js', host.hostname)
+      } else {
+        const threads = Math.floor(host.maxRam / ns.getScriptRam('basic_hack.js'))
+        if (threads > 0) {
+          ns.print(`Running basic hack on ${host.hostname}`)
+          await ns.scp('basic_hack.js', host.hostname)
+          ns.exec('basic_hack.js', host.hostname)
+        }
       }
     }
 
