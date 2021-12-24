@@ -24,7 +24,7 @@ export async function main(ns) {
 
     const portHackScripts = ['BruteSSH.exe', 'FTPCrack.exe', 'relaySMTP.exe', 'HTTPWorm.exe', 'SQLInject.exe'].filter(fileName => ns.fileExists(fileName))
 
-    const hackableHosts = Object.values(hostData)
+    const hackableHosts = allHosts
       .filter(host => !host.hasAdminRights)
       .filter(host => player.hacking >= host.requiredHackingSkill && portHackScripts.length >= host.numOpenPortsRequired)
 
@@ -34,8 +34,8 @@ export async function main(ns) {
       await ns.scp('bootstrap.js', host.hostname)
       ns.exec('bootstrap.js', host.hostname)
     })
-    const rootableHosts = Object.values(hostData).filter(host => host.hasAdminRights)
-    const nextHostAtSKill = Object.values(hostData)
+    const rootableHosts = allHosts.filter(host => host.hasAdminRights)
+    const nextHostAtSKill = allHosts
        .filter(host => player.hacking < host.requiredHackingSkill && portHackScripts.length >= host.numOpenPortsRequired)
       .reduce((acc, host) => Math.min(acc, host.requiredHackingSkill), Infinity)
 
