@@ -1,5 +1,5 @@
 /** @param {NS} ns **/
-import { getAllHostnames, getFullDataForHost } from 'lib.js'
+import { getAllHostnames, getFullDataForHostWithFormulas } from 'lib.js'
 
 export async function main(ns) {
   ns.disableLog('ALL')
@@ -9,7 +9,7 @@ export async function main(ns) {
   while (true) {
    const allHostnames = getAllHostnames(ns)
 
-    const allHosts = allHostnames.map(getFullDataForHost(ns))
+    const allHosts = allHostnames.map(getFullDataForHostWithFormulas(ns))
     const hostnamesBeingHacked = [primeTarget]
 
     const scriptCost = Math.max(ns.getScriptRam('hack.js'), ns.getScriptRam('grow.js'), ns.getScriptRam('weaken.js'))
