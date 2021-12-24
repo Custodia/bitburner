@@ -16,7 +16,8 @@ export async function main(ns) {
     'grow',
     'lib',
     'connect',
-    'main'
+    'main',
+    'init'
   ]
 
   const branch = 'master'
