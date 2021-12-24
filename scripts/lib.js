@@ -58,7 +58,6 @@ export function getAllHostnames(ns) {
   }
 
   _connectedHosts = _connectedHosts.filter(host => host !== 'home')
-  ns.print(`Scanned at depth ${depth} and found ${_connectedHosts.length} hosts`)
   return _connectedHosts
 }
 
