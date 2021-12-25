@@ -3,9 +3,9 @@ export async function main(ns) {
   const currentHost = ns.getHostname()
 
   // Initialize global variables
-  primeTarget = 'n00dles'
-  nodeClaims = {}
-  hostData = {}
+  window.primeTarget = 'n00dles'
+  window.nodeClaims = {}
+  window.hostData = {}
 
   const url = `https://raw.githubusercontent.com/Custodia/bitburner/master/scripts/pull.js`
   const result = await ns.wget(url, `pull.js`)
