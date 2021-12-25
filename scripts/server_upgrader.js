@@ -41,8 +41,8 @@ export async function main(ns) {
       ns.deleteServer(nextServer.host)
       ns.purchaseServer(newHostname, nextRam)
 
-      await ns.scp('bootstrap_advanced.js', newHostname)
-      ns.exec('bootstrap_advanced.js', newHostname)
+      await ns.scp('bootstrap.js', newHostname)
+      ns.exec('bootstrap.js', newHostname)
 	  } else {
       await ns.sleep(10000)
     }

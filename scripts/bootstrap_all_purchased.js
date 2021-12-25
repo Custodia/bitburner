@@ -30,9 +30,9 @@ export async function main(ns) {
     const hostToHack = hackableServers.shift()
 
     ns.print(`Setting ${hostToBootstrap} to hack ${hostToHack.hostname}`)
-    await ns.scp('bootstrap_advanced.js', 'home', hostToBootstrap);
+    await ns.scp('bootstrap.js', 'home', hostToBootstrap);
     await ns.sleep(1000)
     ns.killall(hostToBootstrap)
-    ns.exec('bootstrap_advanced.js', hostToBootstrap, 1)
+    ns.exec('bootstrap.js', hostToBootstrap, 1)
   }
 }

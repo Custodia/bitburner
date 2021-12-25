@@ -61,10 +61,10 @@ export async function main(ns) {
 
     for (const i in utilizableHosts) {
       const host = utilizableHosts[i]
-      if (host.maxRam > ns.getScriptRam('bootstrap_advanced.js')) {
+      if (host.maxRam > ns.getScriptRam('bootstrap.js')) {
         ns.print(`Bootstrapping ${host.hostname}`)
-        await ns.scp('bootstrap_advanced.js', host.hostname)
-        ns.exec('bootstrap_advanced.js', host.hostname)
+        await ns.scp('bootstrap.js', host.hostname)
+        ns.exec('bootstrap.js', host.hostname)
       } else {
         const threads = Math.floor(host.maxRam / ns.getScriptRam('basic_hack.js'))
         if (threads > 0) {
