@@ -4,7 +4,6 @@ export async function main(ns) {
     'basic_hack',
     'script_updater',
     'bootstrap',
-    'bootstrap_all_purchased',
     'purchase_8gb_server',
     'server_upgrader',
     'hacknet_purchaser',
