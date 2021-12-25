@@ -64,8 +64,10 @@ export async function main(ns) {
   }
 
   // Assign leftover threads to target primeTarget
-  const [totalRam, usedRam] = ns.getServerRam(currentHost)
+  const totalRam = ns.getServerMaxRam(currentHost)
+  const usedRam = ns.getServerUsedRam(currentHost)
   await ns.scp('basic_hack.js', 'home', currentHost)
   const leftoverThreads = Math.floor((totalRam - usedRam + ns.getScriptRam('bootstrap_advanced.js')) / ns.getScriptRam('basic_hack.js'))
+  ns.print(`Spawning basic_hack.js with ${leftoverThreads} threads`)
   ns.spawn('basic_hack.js', leftoverThreads)
 }
