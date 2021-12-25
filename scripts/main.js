@@ -75,6 +75,52 @@ export async function main(ns) {
       }
     }
 
-    await ns.sleep(15000)
+    /*************************************/
+    /* Utilize extra ram on home machine */
+    /*************************************/
+
+    const runningScripts = ['main.js', 'purchase_8gb_server.js', 'server_upgrader.js', 'hacknet_purchaser.js']
+    const oneOffScripts = ['connect.js', 'pull.js', 'scanner.js']
+
+    const usedRam = ns.getServerUsedRam('home')
+    const maxRam = ns.getServerMaxRam('home')
+    let availableRam = maxRam - usedRam
+    const runningProcesses = ns.ps('home')
+
+
+    for (const i in runningScripts) {
+      const script = runningScripts[i]
+      if (!runningProcesses.some(processInfo => processInfo.filename === script)) {
+        availableRam -= ns.getScriptRam(script, 'home')
+      }
+    }
+    const oneOffScriptMaxCost = oneOffScripts.reduce((acc, script) => {
+      return ns.fileExists(script, 'home') ? Math.max(acc, ns.getScriptRam(script, 'home')) : acc
+    }, 0)
+    availableRam -= oneOffScriptMaxCost
+    const runningHackProcess = runningProcesses.find(runningProcess => runningProcess.filename == 'basic_hack.js')
+    const currentThreads = runningHackProcess ? runningHackProcess.threads : 0
+    availableRam += currentThreads * ns.getScriptRam('basic_hack.js')
+
+    const availableThreads = Math.floor(availableRam / ns.getScriptRam('basic_hack.js'))
+    if (availableThreads > currentThreads) {
+      if (runningHackProcess) {
+        ns.kill(runningHackProcess.filename, 'home', ...runningHackProcess.args)
+      }
+      const sortedHosts = [...allHosts]
+        .filter(host => host.hackStats.earningPotential > 0)
+        .sort((a, b) => b.hackStats.earningPotential - a.hackStats.earningPotential)
+
+      if (sortedHosts.length == 1) {
+        ns.print(`Spawning ${availableThreads} threads running basic_hack with no target`)
+        ns.run('basic_hack.js', availableThreads)
+      } else if (sortedHosts.length > 1) {
+        const targetHostname = sortedHosts[1].hostname
+        ns.print(`Spawning ${availableThreads} threads running basic_hack targeting ${targetHostname}`)
+        ns.run('basic_hack.js', availableThreads, targetHostname)
+      }
+    }
+
+    await ns.sleep(25000)
   }
 }
