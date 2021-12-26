@@ -42,13 +42,20 @@ export async function main(ns) {
       .reduce((acc, host) => Math.min(acc, host.requiredHackingSkill), Infinity)
 
     if (hackableHosts.length > 0) {
+      ns.tprint('')
+      ns.print('')
       ns.tprint('Results on latest successfull penetration:')
+      ns.print('Results on latest successfull penetration:')
       ns.tprint(`Hacked ${hackableHosts.length} new hosts`)
+      ns.print(`Hacked ${hackableHosts.length} new hosts`)
       ns.tprint(`Currently can access ${rootableHosts.length} out of ${allHosts.length}`)
+      ns.print(`Currently can access ${rootableHosts.length} out of ${allHosts.length}`)
       if (nextHostAtSKill !== Infinity) {
         ns.tprint(`Next host unlocks at ${nextHostAtSKill}`)
+        ns.print(`Next host unlocks at ${nextHostAtSKill}`)
       } else if (portHackScripts.length < 5) {
         ns.tprint(`More port tools are needed to unlock next host`)
+        ns.print(`More port tools are needed to unlock next host`)
       }
     }
 
