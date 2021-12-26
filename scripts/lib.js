@@ -113,7 +113,13 @@ export function getFullDataForHostWithFormulas(ns) {
       hostname,
       ...server,
       server,
-      weakenAmount,
+      hackInfoStats: {
+        hackChance,
+        hackPercent,
+        hackSecurityIncrease,
+        growSecurityIncrease,
+        weakenAmount
+      },
       hackStats: {
         // Threads
         hackThreads,
