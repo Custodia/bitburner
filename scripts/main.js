@@ -4,6 +4,7 @@ import { getAllHostnames, getFullDataForHostWithFormulas, runPortScript } from '
 export async function main(ns) {
   ns.disableLog('ALL')
 
+  let firstRun = true
   while (true) {
     // Cleanup deleted hosts
     for (const key in hostData) {
@@ -41,18 +42,19 @@ export async function main(ns) {
        .filter(host => player.hacking < host.requiredHackingSkill && portHackScripts.length >= host.numOpenPortsRequired)
       .reduce((acc, host) => Math.min(acc, host.requiredHackingSkill), Infinity)
 
-    if (hackableHosts.length > 0) {
-      ns.tprint('')
+    if (firstRun || hackableHosts.length > 0) {
       ns.print('')
-      ns.tprint('Results on latest successfull penetration:')
-      ns.print('Results on latest successfull penetration:')
-      ns.tprint(`Hacked ${hackableHosts.length} new hosts`)
-      ns.print(`Hacked ${hackableHosts.length} new hosts`)
-      ns.tprint(`Currently can access ${rootableHosts.length} out of ${allHosts.length}`)
-      ns.print(`Currently can access ${rootableHosts.length} out of ${allHosts.length}`)
+      if (hackableHosts.length > 0) {
+        ns.tprint('Results on latest successful penetration:')
+        ns.print('Results on latest successful penetration:')
+        ns.tprint(`Hacked ${hackableHosts.length} new hosts`)
+        ns.print(`Hacked ${hackableHosts.length} new hosts`)
+      }
+      ns.tprint(`Currently can access ${rootableHosts.length} out of ${allHosts.length} hosts`)
+      ns.print(`Currently can access ${rootableHosts.length} out of ${allHosts.length} hosts`)
       if (nextHostAtSKill !== Infinity) {
-        ns.tprint(`Next host unlocks at ${nextHostAtSKill}`)
-        ns.print(`Next host unlocks at ${nextHostAtSKill}`)
+        ns.tprint(`Next host unlocks at ${nextHostAtSKill} hacking skill`)
+        ns.print(`Next host unlocks at ${nextHostAtSKill} hacking skill`)
       } else if (portHackScripts.length < 5) {
         ns.tprint(`More port tools are needed to unlock next host`)
         ns.print(`More port tools are needed to unlock next host`)
@@ -128,6 +130,7 @@ export async function main(ns) {
       }
     }
 
+    firstRun = false
     await ns.sleep(25000)
   }
 }
