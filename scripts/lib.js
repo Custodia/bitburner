@@ -65,6 +65,16 @@ export function getFullDataForHostWithFormulas(ns) {
   return hostname => {
     const player = ns.getPlayer()
     const server = ns.getServer(hostname)
+    const {
+      purchasedByPlayer,
+      hasAdminRights,
+      backdoorInstalled,
+      requiredHackingSkill,
+      numOpenPortsRequired,
+      moneyMax,
+      maxRam,
+      ramUsed
+    } = server
     const optimalServer = {
       ...server,
       hackDifficulty: server.minDifficulty
@@ -111,7 +121,14 @@ export function getFullDataForHostWithFormulas(ns) {
 
     const result = {
       hostname,
-      ...server,
+      purchasedByPlayer,
+      hasAdminRights,
+      backdoorInstalled,
+      requiredHackingSkill,
+      numOpenPortsRequired,
+      moneyMax,
+      maxRam,
+      ramUsed,
       server,
       hackInfoStats: {
         hackChance,
