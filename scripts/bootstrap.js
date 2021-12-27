@@ -52,6 +52,27 @@ export async function main(ns) {
       pickedHosts.push(bestHost.hostname)
       nodeClaims[currentHost] = pickedHosts
 
+      while (ns.getServerSecurityLevel(bestHost.hostname) > bestHost.server.minDifficulty) {
+        const weakenTime = ns.getWeakenTime(bestHost.hostname) + 25
+        ns.print(`Weakening ${bestHost.hostname} for ${ns.tFormat(weakenTime)}`)
+        const pid = ns.run('weaken.js', availableThreads, bestHost.hostname, 1)
+        await ns.sleep(pid !== 0 ? weakenTime : 1000)
+      }
+
+      while (ns.getServerMoneyAvailable(bestHost.hostname) < bestHost.server.moneyMax) {
+        const growTime = ns.getGrowTime(bestHost.hostname) + 25
+        ns.print(`Growing ${bestHost.hostname} for ${ns.tFormat(growTime)}`)
+        const pid = ns.run('grow.js', availableThreads, bestHost.hostname, 1)
+        await ns.sleep(pid !== 0 ? growTime : 1000)
+      }
+
+      while (ns.getServerSecurityLevel(bestHost.hostname) > bestHost.server.minDifficulty) {
+        const weakenTime = ns.getWeakenTime(bestHost.hostname) + 25
+        ns.print(`Weakening ${bestHost.hostname} for ${ns.tFormat(weakenTime)}`)
+        const pid = ns.run('weaken.js', availableThreads, bestHost.hostname, 1)
+        await ns.sleep(pid !== 0 ? weakenTime : 1000)
+      }
+
       availableThreads -= weakenThreads + growThreads + hackThreads
 
       ns.run('weaken.js', weakenThreads, bestHost.hostname)
