@@ -92,7 +92,7 @@ export function getFullDataForHostWithFormulas(ns) {
     let growCalls = 1
     let growPercent = ns.formulas.hacking.growPercent(optimalServer, growCalls, player) / 100
     let previousPercent = -1
-    while (growPercent < 2.2) {
+    while (growPercent < 3) {
       growCalls++
       growPercent = ns.formulas.hacking.growPercent(optimalServer, growCalls, player) / 100
       if (growPercent == previousPercent) {
