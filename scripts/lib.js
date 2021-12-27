@@ -85,16 +85,16 @@ export function getFullDataForHostWithFormulas(ns) {
     const hackTime = ns.formulas.hacking.hackTime(optimalServer, player)
 
     const hackChance = ns.formulas.hacking.hackChance(optimalServer, player)
-    const hackPercent = ns.formulas.hacking.hackPercent(optimalServer, player) / 100
+    const hackPercent = ns.formulas.hacking.hackPercent(optimalServer, player)
     const hackCalls = Math.ceil(0.5 / (hackPercent * hackChance))
     const hackSecurityIncrease = ns.hackAnalyzeSecurity(hackCalls)
 
     let growCalls = 1
-    let growPercent = ns.formulas.hacking.growPercent(optimalServer, growCalls, player) / 100
+    let growPercent = ns.formulas.hacking.growPercent(optimalServer, growCalls, player)
     let previousPercent = -1
     while (growPercent < 3) {
       growCalls++
-      growPercent = ns.formulas.hacking.growPercent(optimalServer, growCalls, player) / 100
+      growPercent = ns.formulas.hacking.growPercent(optimalServer, growCalls, player)
       if (growPercent == previousPercent) {
         growCalls = Infinity
         break;
@@ -134,8 +134,11 @@ export function getFullDataForHostWithFormulas(ns) {
         hackChance,
         hackPercent,
         hackSecurityIncrease,
+
         growSecurityIncrease,
-        weakenAmount
+        weakenAmount,
+
+        earningPotentialPerMinute
       },
       hackStats: {
         // Threads
