@@ -107,27 +107,49 @@ export async function main(ns) {
       return ns.fileExists(script, 'home') ? Math.max(acc, ns.getScriptRam(script, 'home')) : acc
     }, 0)
     availableRam -= oneOffScriptMaxCost
-    const runningHackProcess = runningProcesses.find(runningProcess => runningProcess.filename == 'basic_hack.js')
-    const currentThreads = runningHackProcess ? runningHackProcess.threads : 0
+    const runningHackProcesses = runningProcesses.filter(runningProcess => runningProcess.filename == 'basic_hack.js')
+    const currentThreads = runningHackProcesses.reduce((acc, process) => acc + process.threads, 0)
     availableRam += currentThreads * ns.getScriptRam('basic_hack.js')
 
-    const availableThreads = Math.floor(availableRam / ns.getScriptRam('basic_hack.js'))
+    let availableThreads = Math.floor(availableRam / ns.getScriptRam('basic_hack.js'))
     if (availableThreads > currentThreads) {
-      if (runningHackProcess) {
+      for (const i in runningHackProcesses) {
+        const runningHackProcess = runningHackProcesses[i]
         ns.kill(runningHackProcess.filename, 'home', ...runningHackProcess.args)
       }
-      const sortedHosts = [...allHosts]
+      let potentialHosts = [...allHosts]
         .filter(host => host.hasAdminRights)
         .filter(host => host.hackStats.earningPotential > 0)
-        .sort((a, b) => b.hackStats.earningPotential - a.hackStats.earningPotential)
 
-      if (sortedHosts.length == 1) {
+      while (availableThreads > 0 && potentialHosts.length > 0) {
+        const hostsThatFit = potentialHosts
+          .filter(host => {
+            const requiredThreads = Math.max(host.hackStats.hackThreads, host.hackStats.growThreads, host.hackStats.weakenThreads)
+            return availableThreads >= requiredThreads
+          })
+          .sort((a, b) => b.hackStats.earningPotential - a.hackStats.earningPotential)
+        const hostsThatDontFit = potentialHosts
+          .filter(host => {
+            const requiredThreads = Math.max(host.hackStats.hackThreads, host.hackStats.growThreads, host.hackStats.weakenThreads)
+            return availableThreads < requiredThreads
+          })
+          .sort((a, b) => b.hackStats.earningPotential - a.hackStats.earningPotential)
+        const sortedHosts = hostsThatFit.concat(hostsThatDontFit)
+
+        const targetHost = sortedHosts[0]
+        potentialHosts = potentialHosts.filter(host => host.hostname !== targetHost.hostname)
+        const targetHostname = targetHost.hostname
+        const requiredThreads = Math.max(targetHost.hackStats.hackThreads, targetHost.hackStats.growThreads, targetHost.hackStats.weakenThreads)
+        const threadsToUse = Math.min(availableThreads, requiredThreads)
+        availableThreads -= threadsToUse
+
+        ns.print(`Spawning ${threadsToUse} threads running basic_hack targeting ${targetHostname}`)
+        ns.run('basic_hack.js', threadsToUse, targetHostname)
+      }
+
+      if (availableThreads > 0) {
         ns.print(`Spawning ${availableThreads} threads running basic_hack with no target`)
         ns.run('basic_hack.js', availableThreads)
-      } else if (sortedHosts.length > 1) {
-        const targetHostname = sortedHosts[1].hostname
-        ns.print(`Spawning ${availableThreads} threads running basic_hack targeting ${targetHostname}`)
-        ns.run('basic_hack.js', availableThreads, targetHostname)
       }
     }
 
