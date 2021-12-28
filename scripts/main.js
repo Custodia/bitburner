@@ -117,6 +117,7 @@ export async function main(ns) {
         ns.kill(runningHackProcess.filename, 'home', ...runningHackProcess.args)
       }
       const sortedHosts = [...allHosts]
+        .filter(host => host.hasAdminRights)
         .filter(host => host.hackStats.earningPotential > 0)
         .sort((a, b) => b.hackStats.earningPotential - a.hackStats.earningPotential)
 
