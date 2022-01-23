@@ -233,3 +233,75 @@ export function getFullDataForHost(ns) {
     return result
   }
 }
+
+export function getPrimeThreadCounts(ns, targetHost) {
+  const player = ns.getPlayer()
+  const currentHost = ns.getHostname()
+  const currentServer = ns.getServer(currentHost)
+  const { cpuCores } = currentServer
+  const targetServer = ns.getServer(targetHost)
+
+  let initialWeakenCalls = 0
+  while (ns.weakenAnalyze(initialWeakenCalls, cpuCores) < targetServer.hackDifficulty - targetServer.minDifficulty) {
+    initialWeakenCalls++
+  }
+
+  let growCalls = 0
+  let growPercent = ns.formulas.hacking.growPercent(targetServer, growCalls, player, cpuCores)
+  const targetPercent = (targetServer.moneyMax / targetServer.moneyAvailable) * 100 * 1.01
+  let previousPercent = -1
+  while (growPercent < targetPercent) {
+    growCalls++
+    growPercent = ns.formulas.hacking.growPercent(targetServer, growCalls, player, cpuCores)
+    if (growPercent == previousPercent) {
+      throw('growPercent == previousPercent')
+    } else {
+      previousPercent = growPercent
+    }
+  }
+  const growthSecurityIncrease = ns.growthAnalyzeSecurity(growCalls)
+
+  let growWeakenCalls = 1
+  while (ns.weakenAnalyze(growWeakenCalls, cpuCores) < growthSecurityIncrease) {
+    growWeakenCalls++
+  }
+
+  return {
+    initialWeakenCalls,
+    growCalls,
+    growWeakenCalls
+  }
+}
+
+export async function primeTarget(ns, targetHost) {
+  const player = ns.getPlayer()
+  const currentHost = ns.getHostname()
+  const targetServer = ns.getServer(targetHost)
+
+  const {
+    initialWeakenCalls,
+    growCalls,
+    growWeakenCalls
+  } = getPrimeThreadCounts(ns, targetHost)
+
+  const weakenTime = ns.formulas.hacking.weakenTime(targetServer, player)
+  const growTime = ns.formulas.hacking.growTime(targetServer, player)
+
+  const maxTime = Math.max(weakenTime, growTime)
+
+  await ns.scp(['hack.js', 'weaken.js', 'grow.js'], 'home', currentHost)
+
+  if (initialWeakenCalls > 0) {
+    ns.exec('weaken.js', currentHost, initialWeakenCalls, targetHost, 1, maxTime - weakenTime)
+  }
+  if (growCalls > 0) {
+    ns.exec('grow.js',   currentHost, growCalls,          targetHost, 1, maxTime - growTime + 100)
+  }
+  if (growWeakenCalls > 0) {
+    ns.exec('weaken.js', currentHost, growWeakenCalls,    targetHost, 1, maxTime - weakenTime + 200)
+  }
+
+  if (initialWeakenCalls > 0 || growCalls > 0 || growWeakenCalls > 0) {
+    await sleep(ns, maxTime + 500)
+  }
+}
